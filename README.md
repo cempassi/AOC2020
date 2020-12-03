@@ -2,5 +2,9 @@
 
 Advent of Code 2020
 
-[*] Day01: ex00
-[] Day01: ex01
+- [x] Day01: Part 1
+- [x] Day01: Part 2
+- [x] Day02: Part 1
+- [x] Day02: Part 2
+- [ ] Day03: Part 1
+- [ ] Day03: Part 2
