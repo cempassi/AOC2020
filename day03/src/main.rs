@@ -17,7 +17,7 @@ struct Point {
 
 struct Traveler {
     position: Point,
-    tree_seen: u32,
+    tree_seen: u64,
 }
 
 struct Map {
@@ -27,10 +27,10 @@ struct Map {
 }
 
 impl Point {
-    fn moving(self: Self, line: usize, column: usize) -> Point {
+    fn moving(self: Self, direction: &Point) -> Point {
         Point {
-            line: self.line + line,
-            column: self.column + column,
+            line: self.line + direction.line,
+            column: self.column + direction.column,
         }
     }
 }
@@ -51,8 +51,8 @@ impl Traveler {
         }
     }
 
-    fn move_once(self: &mut Self, map: &Map) {
-        self.position = self.position.moving(1, 3);
+    fn move_once(self: &mut Self, map: &Map, direction: &Point) {
+        self.position = self.position.moving(direction);
         match map.translate(&self.position) {
             '#' => self.tree_seen += 1,
             _ => (),
@@ -60,11 +60,17 @@ impl Traveler {
     }
 }
 
-fn travel(map: Map, mut traveler: Traveler) {
-    while traveler.is_traveling(&map) {
-        traveler.move_once(&map);
+fn travel(map: &Map, direction: Point) -> u64 {
+    let mut traveler = Traveler {
+        position: Point { line: 0, column: 0 },
+        tree_seen: 0,
+    };
+
+    while traveler.is_traveling(map) {
+        traveler.move_once(map, &direction);
     }
     println!("Number of trees: {}", traveler.tree_seen);
+    traveler.tree_seen
 }
 
 fn main() -> Result<(), Error> {
@@ -74,10 +80,14 @@ fn main() -> Result<(), Error> {
         height: readed.len(),
         map: readed,
     };
-    let traveler = Traveler {
-        position: Point { line: 0, column: 0 },
-        tree_seen: 0,
-    };
-    travel(map, traveler);
+
+    let mut results: Vec<u64> = Vec::new();
+    results.push(travel(&map, Point{line: 1, column:1}));
+    results.push(travel(&map, Point{line: 1, column:3}));
+    results.push(travel(&map, Point{line: 1, column:5}));
+    results.push(travel(&map, Point{line: 1, column:7}));
+    results.push(travel(&map, Point{line: 2, column:1}));
+    let product = results.into_iter().fold(1, |acc, x| acc * x);
+    println!("Product: {}", product);
     Ok(())
 }

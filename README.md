@@ -7,4 +7,4 @@ Advent of Code 2020
 - [x] Day02: Part 1
 - [x] Day02: Part 2
 - [x] Day03: Part 1
-- [ ] Day03: Part 2
+- [x] Day03: Part 2
