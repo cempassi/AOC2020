@@ -12,12 +12,30 @@ struct Passwd {
 }
 
 impl Passwd {
-    fn validate (self: &Self) -> bool {
+    fn validate_first(self: &Self) -> bool {
         let count: usize = self.password.matches(self.letter).count();
         if count >= self.min && count <= self.max {
             true
+        } else {
+            false
         }
-        else {
+    }
+
+    fn validate_second(self: &Self) -> bool {
+        let first: char = match self.password.chars().nth(self.min - 1) {
+            Some(x) => x,
+            None => '@'
+        };
+        let second: char = match self.password.chars().nth(self.max - 1) {
+            Some(x) => x,
+            None => '@'
+        };
+        if first == self.letter && second == self.letter {
+                false
+        }
+        else if first == self.letter || second == self.letter {
+                true
+        }else {
             false
         }
     }
@@ -43,7 +61,15 @@ fn read<R: Read>(io: R) -> Result<Vec<Passwd>, Error> {
 
 fn main() -> Result<(), Error> {
     let passwords = read(File::open("input")?)?;
-    let valid = passwords.into_iter().filter(|x| x.validate()).count();
-    println!("Result: {:?}", valid);
+    let valid_first = passwords[..]
+        .into_iter()
+        .filter(|x| x.validate_first())
+        .count();
+    println!("Result: {:?}", valid_first);
+    let valid_second = passwords
+        .into_iter()
+        .filter(|x| x.validate_second())
+        .count();
+    println!("Result: {:?}", valid_second);
     Ok(())
 }
